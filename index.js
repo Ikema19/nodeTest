@@ -1,14 +1,17 @@
 const express = require("express");
 const app = express();
-const { Client } = require("pg");
+const { Pool } = require("pg");
 
 //postgresql
-const client = new Client({
+const pool = new Pool({
   user: "kirumo",
   host: "dpg-cl09ib237rbc738kmpsg-a",
   database: "kirumo",
   password: "rUT0ctuPLQOFupoZTjxRUVn0blp7gnSp",
   port: 5432,
+  ssl: {
+    rejectUnauthorized: false, // サーバーのSSL証明書検証を無効にする場合
+  },
 });
 
 app.get("/", (req, res) => {
@@ -16,14 +19,16 @@ app.get("/", (req, res) => {
 });
 
 app.get("/pg", (req, res) => {
-  client.connect();
-  let posts = [];
-  client.query("SELECT * FROM sampletable", (err, res) => {
-    posts = res.rows;
-    client.end();
-  });
 
-  res.send(posts);
+  pool.query('SELECT * FROM sampletable', (error, results) => {
+    if (error) {
+      console.error('Error executing query', error);
+      res.status(500).json({ error: 'An error occurred', details: error.message });
+    } else {
+      // クエリ結果をJSON形式でクライアントに返す
+      res.json(results.rows);
+    }
+  });
 
 });
 
