@@ -1,11 +1,11 @@
 const express = require("express");
-const mysql = require('mysql');
 const app = express();
-const { Client } = require("pg");
+const pg = require("pg");
 
 //postgresql
-const client = new Client({
-  host: "dpg-cl09ib237rbc738kmpsg-a.oregon-postgres.render.com",
+const pool = new pg.Pool({
+  host: "dpg-cl09ib237rbc738kmpsg-a",
+  //host: "dpg-cl09ib237rbc738kmpsg-a.oregon-postgres.render.com",
   port: 5432,
   database: "kirumo",
   user: "kirumo",
@@ -17,38 +17,19 @@ app.get("/", (req, res) => {
 });
 
 app.get("/pg", (req, res) => {
-  // //pg接続
-  // client.connect();
-
-  // //クエリの作成
-  // const query = {
-  //   text: "SELECT * FROM testTable",
-  // };
-
-  // //INSERTの場合
-  // //const query = {
-  // //  text: "INSERT INTO member VALUES ($1, $2)",
-  // //  values: [1, "山田太郎"],
-  // //};
-
-  // client
-  // .query(query)
-  // .then((res) => {
-  //   console.log(res);
-  //   client.end();
-  // })
-  // .catch((e) => console.error(e.stack));
-
-  client.query('SELECT * FROM testTable', (error, results) => {
-    if (error) {
-      console.error('クエリエラー:', error);
-      res.status(500).json({ error: 'データベースエラー' });
+  pool.connect( function(err, client) {
+    if (err) {
+      console.log(err);
     } else {
-      res.json(results.rows);
+      client.query('SELECT * FROM sampletable', function (err, result) {
+        res.render('index', {
+          title: 'Express',
+          datas: result.rows[0].name,
+        });
+        console.log(result); //コンソール上での確認用なため、この1文は必須ではない。
+      });
     }
-  });
-
-
+  })
 });
 
 app.listen(3000);
