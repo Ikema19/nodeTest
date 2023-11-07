@@ -12,7 +12,7 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port: process.env.PORT,
+  port: Number(!!process.env.PORT) ,
   ssl: {
     rejectUnauthorized: false, // サーバーのSSL証明書検証を無効にする場合
   },
