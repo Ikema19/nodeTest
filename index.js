@@ -12,11 +12,13 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
-  port: Number(!!process.env.PORT) ,
+  port: process.env.DB_PORT,
   ssl: {
     rejectUnauthorized: false, // サーバーのSSL証明書検証を無効にする場合
   },
 });
+
+console.log(process.env.DB_USER)
 
 app.get("/", (req, res) => {
   res.send("Hello world\n");
