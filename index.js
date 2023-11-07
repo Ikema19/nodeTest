@@ -2,13 +2,17 @@ const express = require("express");
 const app = express();
 const { Pool } = require("pg");
 
+//環境変数
+require('dotenv').config();
+
+
 //postgresql
 const pool = new Pool({
-  user: "kirumo",
-  host: "dpg-cl09ib237rbc738kmpsg-a",
-  database: "kirumo",
-  password: "rUT0ctuPLQOFupoZTjxRUVn0blp7gnSp",
-  port: 5432,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.PORT,
   ssl: {
     rejectUnauthorized: false, // サーバーのSSL証明書検証を無効にする場合
   },
